@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,11 +43,53 @@ public class BasicItemController {
         return "basic/addForm";
     }
 
-    @PostMapping("/add")
-    public String save() {
-        return "basic/addForm";
+//    @PostMapping("/add")
+    public String addItemV1(@RequestParam String itemName,
+                       @RequestParam int price,
+                       @RequestParam Integer quantity,
+                       Model model) {
+
+        Item item = new Item();
+        item.setItemName(itemName);
+        item.setPrice(price);
+        item.setQuantity(quantity);
+        //생성자 통해 바로 만들어도 ok.
+
+        itemRepository.save(item);
+
+        model.addAttribute("item", item); //저장후 바로 model에 담아 반환.
+
+        return "basic/item"; //목록으로이동.
     }
 
+
+    //ModelAttribute 사용 버전.
+//    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item") Item item, Model model) {
+        //@ModelAttribute("item") : 여기서 "item"은 model.addAttribute에 담기는 값의 이름.
+        //@ModelAttritube 가 자동으로 객체 생성해 요청파라미터의 값을 set방식으로 담아준다.
+
+        itemRepository.save(item);
+//        model.addAttribute("item", item); //자동 생성되므로 없어도 동일하게 작동. 생략가능.
+
+        return "basic/item"; //목록으로이동.
+    }
+
+//    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item, Model model) {
+        //@ModelAttribute에 name 미지정시 item이 자동으로 name이 된다.
+        itemRepository.save(item);
+//        model.addAttribute("item", item);
+
+        return "basic/item"; //목록으로이동.
+    }
+
+    //가장 생략된 버전. @ModelAttribute 생략.
+    @PostMapping("/add")
+    public String addItemV4(Item item) {
+        itemRepository.save(item);
+        return "basic/item"; //목록으로이동.
+    }
 
     /**
      * Test용 데이터 추가
