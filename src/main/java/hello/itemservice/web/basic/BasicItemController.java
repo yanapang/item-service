@@ -84,11 +84,25 @@ public class BasicItemController {
         return "basic/item"; //목록으로이동.
     }
 
-    //가장 생략된 버전. @ModelAttribute 생략.
-    @PostMapping("/add")
+    /**
+     *  가장 생략된 버전. @ModelAttribute 생략.
+     */
+    //@PostMapping("/add")
     public String addItemV4(Item item) {
         itemRepository.save(item);
         return "basic/item"; //목록으로이동.
+    }
+
+
+    /**
+     * redirect를 리턴해,
+     * 새로고침시 같은 값 계속 submit 하는 문제 해결.
+     * 상품 상세 페이지로 redirect 됨.
+     */
+    @PostMapping("/add")
+    public String addItemV5(Item item) {
+        itemRepository.save(item);
+        return "redirect:/basic/items/" + item.getId(); //목록으로이동.
     }
 
     //상품 수정.
